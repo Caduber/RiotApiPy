@@ -1,6 +1,8 @@
 import requests
 import json
 import customtkinter as ctk
+from PIL import Image
+import io
 
 
 
@@ -36,6 +38,8 @@ if __name__ == "__main__":
     sobre = getPerfil(puuid)
     nivel = sobre[0]
     icon = sobre[1]
+    icon = (requests.get("https://raw.communitydragon.org/14.23/game/assets/ux/summonericons/profileicon" + icon + ".png"))
+    icon = Image.open(io.BytesIO(icon.content))
 
     #teste = getPerfil(puuid)
     #print(teste)
@@ -64,6 +68,7 @@ if __name__ == "__main__":
         label_tag.configure(text=resposta2)
         label_puuid.configure(text=resposta3)
         label_nivel.configure(text=resposta4)
+        # img_icone.configure(light_image=icon, dark_image=icon)
 
     # Criando as entradas de texto
     entrada1 = ctk.CTkEntry(app, placeholder_text="Nome de Invocador")
@@ -77,6 +82,9 @@ if __name__ == "__main__":
     botao.pack(pady=20)
 
     # Criando os rótulos para exibir as respostas (inicialmente vazios)
+    img_icone = ctk.CTkImage(light_image=icon, dark_image=None, size=(200,200))
+    img_icone.pack(pady=60)
+
     label_nome = ctk.CTkLabel(app, text="")
     label_nome.pack(pady=5)
 
