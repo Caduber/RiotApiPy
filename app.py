@@ -6,7 +6,7 @@ import io
 
 
 
-key = "RGAPI-98342377-da5d-4e05-acca-7a9ce8a7ef6b"
+key = "RGAPI-8141c5a5-4c03-4d09-9847-44e923be5d2f"
 
 
 def getInvocador(nome, tag):
@@ -26,23 +26,22 @@ def getPerfil(puuid):
     
     return level[0], icon[0]
 
+def get_icon_image(icon_id):
+    url = f"https://raw.communitydragon.org/14.23/game/assets/ux/summonericons/profileicon{icon_id}.png"
+    response = requests.get(url)
+    if response.status_code == 200:
+        return Image.open(io.BytesIO(response.content))
+    else:
+        print("Erro ao carregar o ícone:", response.status_code)
+        return None
+
 
 
 
 if __name__ == "__main__": 
 
-    nome = "T1 Cazeus"
-    tag = "LNA"
-    puuid = getInvocador(nome, tag)
-
-    sobre = getPerfil(puuid)
-    nivel = sobre[0]
-    icon = sobre[1]
-    icon = (requests.get("https://raw.communitydragon.org/14.23/game/assets/ux/summonericons/profileicon" + icon + ".png"))
-    icon = Image.open(io.BytesIO(icon.content))
-
-    #teste = getPerfil(puuid)
-    #print(teste)
+    
+    
 
 
     ##########################
@@ -53,10 +52,19 @@ if __name__ == "__main__":
     app.title("Entradas e Respostas")
     app.geometry("1000x700")
 
+
     def criar_respostas():
         # Obtendo os valores das entradas
         nome = entrada1.get()
         tag = entrada2.get()
+
+        ######
+        # baseado nas entradas mapeia todo o invocador
+        puuid = getInvocador(nome, tag)
+        sobre = getPerfil(puuid)
+        nivel = sobre[0]
+        icon = sobre[1]
+        ######
 
         resposta1 = f"Nome: {nome}"
         resposta2 = f"Tag: {tag}"
@@ -68,7 +76,20 @@ if __name__ == "__main__":
         label_tag.configure(text=resposta2)
         label_puuid.configure(text=resposta3)
         label_nivel.configure(text=resposta4)
-        # img_icone.configure(light_image=icon, dark_image=icon)
+
+        #Debug
+        print(getInvocador(nome, tag))
+        #
+
+        icon_image = get_icon_image(icon)
+        if icon_image:
+            icon_ctk = ctk.CTkImage(light_image=icon_image, size=(100, 100))
+            icon_image_label.configure(image=icon_ctk)
+            icon_image_label.image = icon_ctk
+        
+
+    icon_image_label = ctk.CTkLabel(app, text="")
+    icon_image_label.pack(pady=20)
 
     # Criando as entradas de texto
     entrada1 = ctk.CTkEntry(app, placeholder_text="Nome de Invocador")
@@ -81,9 +102,9 @@ if __name__ == "__main__":
     botao = ctk.CTkButton(app, text="Procurar", command=criar_respostas)
     botao.pack(pady=20)
 
-    # Criando os rótulos para exibir as respostas (inicialmente vazios)
-    img_icone = ctk.CTkImage(light_image=icon, dark_image=None, size=(200,200))
-    img_icone.pack(pady=60)
+
+    icon_image_label = ctk.CTkLabel(app, text="")
+    icon_image_label.pack(pady=20)
 
     label_nome = ctk.CTkLabel(app, text="")
     label_nome.pack(pady=5)
